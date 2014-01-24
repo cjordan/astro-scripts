@@ -38,7 +38,7 @@ class Astro
 
     def self.radec_to_deg(radec_pair)
         # from a [RA,Dec] input {(-)xx:xx:xx.xxx format}, outputs a float array of the input in degrees
-        abort("Input array is not of size 2.") if not radec_pair.length == 2
+        abort("*** #{File.basename(__FILE__)}: Input array is not of size 2.") if not radec_pair.length == 2
         return radec_pair.map{|c| c.split(":").map{|c| c.to_f.abs}.zip([1,1.0/60,1.0/3600]).map{|c| c.first*c.last}.inject{|total,c| total+c}}.zip([15,radec_pair[1].include?("-") ? -1 : 1]).map{|c| c.first*c.last}
 
         # the following is slightly faster, but dirty.

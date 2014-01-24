@@ -43,7 +43,7 @@ class Uv_file
     def initialize(file,options)
         @orig = file
         @options = options
-        @return_str = "\n*** moment.rb: Output for #{file}\n"
+        @return_str = "\n*** #{File.basename(__FILE__)}: Output for #{file}\n"
         if Astro.fitsfile?(file)
             @uv = File.basename(@orig).match(/(.*)\.fits/)[1]
             self.uv_convert
@@ -88,7 +88,7 @@ class Uv_file
 end
 
 
-abort("\n*** moment.rb: Cannot have force and ignore options enabled simultaneously! Exiting...\n") if options[:force?] and options[:ignore?]
+abort("\n*** #{File.basename(__FILE__)}: Cannot have force and ignore options enabled simultaneously! Exiting...\n") if options[:force?] and options[:ignore?]
 
 ARGV.peach(4) do |f|
     current = Uv_file.new(f,options)
