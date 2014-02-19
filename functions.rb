@@ -21,7 +21,7 @@ class Astro
     end
 
     def self.fitsfile?(f)
-        true if f.include? '.fits' and File.file?(f)
+        true if f.downcase.include? '.fits' and File.file?(f)
     end
 
     def self.cotra_radec(gc)

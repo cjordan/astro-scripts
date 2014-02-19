@@ -45,7 +45,7 @@ class Uv_file
         @options = options
         @return_str = "\n*** #{File.basename(__FILE__)}: Output for #{file}\n"
         if Astro.fitsfile?(file)
-            @uv = File.basename(@orig).match(/(.*)\.fits/)[1]
+            @uv = File.basename(@orig).match(/(.*)\./)[1]
             self.uv_convert
         else
             @uv = @orig
