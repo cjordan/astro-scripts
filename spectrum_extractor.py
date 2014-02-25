@@ -55,8 +55,8 @@ velocity = np.linspace(vel_min/1000, vel_max/1000, num=z_pixel_num)
 # For each coordinate pair...
 for x, y in coordsArray:
     # Determine the pixel for this coordinate
-    xPixel = int( (x-x_centre)/x_pixel_delta + x_pixel_num/2 )
-    yPixel = int( (y-y_centre)/y_pixel_delta + y_pixel_num/2 )
+    xPixel = int(round( (x-x_centre)/x_pixel_delta + x_pixel_num/2 ))
+    yPixel = int(round( (y-y_centre)/y_pixel_delta + y_pixel_num/2 ))
 
     # Pull the frequency axis from this pixel
     spectrum = cubePixels[xPixel, yPixel]
