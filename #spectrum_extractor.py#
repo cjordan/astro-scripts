@@ -48,8 +48,8 @@ coordsArray = np.loadtxt(coords)
 cubePixels = cube[0].data.transpose((2,1,0))
 
 # Build a vector containing the velocities of the cube
-vel_min = -z_pixel_num/2*z_pixel_delta + z_centre - z_pixel_delta
-vel_max =  z_pixel_num/2*z_pixel_delta + z_centre - 2*z_pixel_delta
+vel_min = -z_pixel_num/2*z_pixel_delta + z_centre
+vel_max =  z_pixel_num/2*z_pixel_delta + z_centre
 velocity = np.linspace(vel_min/1000, vel_max/1000, num=z_pixel_num)
 
 # For each coordinate pair...
@@ -81,7 +81,7 @@ for x, y in coordsArray:
     if args.plotting:
         fig = plt.figure()
         data = fig.add_subplot(111)
-        data.plot(velocity, spectrum, ls="steps")
+        data.plot(velocity,spectrum, ls="st)
 
         plt.xlim(min(velocity),max(velocity))
 
