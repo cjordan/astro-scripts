@@ -38,6 +38,10 @@ for x in str(cube[0].header).split('/'):
         if "NAXIS2" in line: y_pixel_num = int(line.split()[-1])
         if "NAXIS3" in line: z_pixel_num = int(line.split()[-1])
 
+        if "CRPIX1" in line: x_centre_pixel = float(line.split()[-1])
+        if "CRPIX2" in line: y_centre_pixel = float(line.split()[-1])
+        if "CRPIX3" in line: z_centre_pixel = float(line.split()[-1])
+
 # Make the "SPECTRA" directory if it doesn't exist
 if not os.path.exists("SPECTRA"):
     os.mkdir("SPECTRA")
@@ -48,8 +52,8 @@ coordsArray = np.loadtxt(coords)
 cubePixels = cube[0].data.transpose((2,1,0))
 
 # Build a vector containing the velocities of the cube
-vel_min = -z_pixel_num/2*z_pixel_delta + z_centre - z_pixel_delta
-vel_max =  z_pixel_num/2*z_pixel_delta + z_centre - 2*z_pixel_delta
+vel_min = z_centre - (z_centre_pixel-1)*z_pixel_delta
+vel_max = z_centre + (z_pixel_num-z_centre_pixel)*z_pixel_delta
 velocity = np.linspace(vel_min/1000, vel_max/1000, num=z_pixel_num)
 
 # For each coordinate pair...
