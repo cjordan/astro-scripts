@@ -16,18 +16,20 @@ require "#{__FILE__.match(/(\/.*\/)/)}functions.rb"
 
 options = {}
 optparse = OptionParser.new do |opts|
-    opts.banner = "Produces moment and binned maps of all input files to the current directory. fits files are converted to MIRIAD uv format.
-e.g. moment.rb -i -m-2,0 -b5,10 <file>"
+    opts.banner = "Produces moment and/or channel binned maps of all input files to the current directory. FITS files are converted to MIRIAD UV format.
+e.g. moment.rb -i -m0,-2 -b5,10 <file>"
 
     opts.on('-h','--help','Display this message.') {puts opts; exit}
 
     options[:moment] = []
-    opts.on('-m','--moment order NUM','Specify additional moments to be done. Multiple values accepted, comma separated. eg. 0,-1') {|o| options[:moment] = o.split(',')}
+    opts.on('-m','--moment order NUM','Specify additional moments to be done. Multiple values accepted, comma separated. e.g. 0,-1') {|o| options[:moment] = o.split(',')}
 
     options[:binning] = []
-    opts.on('-b','--binning order NUM','Specify the order of binning to be done. Required. Multiple values accepted, comma separated. eg. 5,10') {|o| options[:binning] = o.split(',')}
+    opts.on('-b','--binning order NUM','Specify the order of binning to be done. Required. Multiple values accepted, comma separated. e.g. 5,10') {|o| options[:binning] = o.split(',')}
 
     opts.on('-s','--smooth NUM,NUM','Smooth each moment map, from specified FWHM.') {|o| options[:smooth] = o}
+
+    opts.on('-r','--region TEXT','Specify the region to moment over. e.g. "kms,images(-60,-50)"') {|o| options[:region] = o}
 
     opts.on('-a','--axis NUM','Axis for which the moment is calculated. Use 2 for a lvb moment.') {|o| options[:axis] = o}
 
@@ -69,10 +71,10 @@ class Uv_file
         return binned
     end
     def moment(order,f=@uv)
-        mom = "#{File.basename(f)}.mom#{order}"
+        mom = "#{File.basename(f)}.mom#{order}#{[".",@options[:region].scan(/\((.*),(.*)\)/).join("_")].join() if @options[:region]}"
         if Astro.overwrite?(mom,@options[:force?],@options[:ignore?])
-            @return_str << "\n*** #{mom}" << `moment in=#{f} out=#{mom} mom=#{order} 2>&1` unless @options[:axis]
-            @return_str << "\n*** #{mom}" << `moment in=#{f} out=#{mom} mom=#{order} axis=#{@options[:axis]} 2>&1` if @options[:axis]
+            @return_str << "\n*** #{mom}" <<
+`moment in=#{f} out=#{mom} mom=#{order} #{["region='",@options[:region],"'"].join() if @options[:region]} #{["axis=",@options[:axis]].join() if @options[:axis]} 2>&1`
             if @options[:smooth]
                 smooth = "#{mom}.smooth"
                 Astro.overwrite?(smooth,@options[:force?],@options[:ignore?])
@@ -90,7 +92,7 @@ end
 
 abort("\n*** #{File.basename(__FILE__)}: Cannot have force and ignore options enabled simultaneously! Exiting...\n") if options[:force?] and options[:ignore?]
 
-ARGV.peach(4) do |f|
+ARGV.sort.peach(4) do |f|
     current = Uv_file.new(f,options)
     options[:moment].each {|m| current.moment(m)} if options[:moment]
     current.output unless options[:quiet?]
